@@ -111,11 +111,11 @@ def all_view():
 		json = {"id" : View[0],
 				"title" : View[1],
         		"description" : View[2],
-        		"images" :  View[3],
+        		"FIO" :  View[3],
         		"price" : View[4],
-        		"FIO" : View[5],
-        		"lat" : View[6],
-        		"long" : View[7],
+        		"lat" : View[5],
+        		"long" : View[6],
+        		"images" : View[7],
         		"address" : View[8]}
 		arr.append(json)
 	return jsonify(arr)
