@@ -70,7 +70,7 @@
                     var json = JSON.stringify(this.form);
 
                     if (this.$store.state.prod) {
-                        this.axios.post('/api/login', this.form)
+                        this.axios.post('http://dinner-near.tw1.ru/login', this.form)
                             .then(resp => {
                                 this.loginPass();
                             });
