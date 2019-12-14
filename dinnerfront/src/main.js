@@ -17,20 +17,27 @@ const store = new Vuex.Store({
     prod: Vue.config.productionTip,
     isLogin: false,
     userInfo: {
-      fio: "",
-      date: new Date()
     }
   },
   mutations: {
     userinfo (state, payload) {
       state.isLogin = true;
-      state.userInfo.fio = payload.fio;
+      state.userInfo = payload;
+      localStorage.setItem("l", payload.id);
     },
     logout(state) {
       state.isLogin = false;
+      localStorage.removeItem("l");
     }
   }
-})
+});
+var t = localStorage.getItem("l");
+if (t) {
+  axios.get('http://dinner-near.tw1.ru/database/user_view/' + t)
+      .then(resp => {
+         store.commit('userinfo', resp.data)
+      });
+}
 
 new Vue({
   router,

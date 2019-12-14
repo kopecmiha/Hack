@@ -115,6 +115,19 @@
                 Закрыть
             </v-btn>
         </v-snackbar>
+        <v-snackbar
+                v-model="snackbarSuccess"
+                :timeout="timeout"
+        >
+            Регистрация успешна, войдите в аккаунт
+            <v-btn
+                    color="blue"
+                    text
+                    @click="snackbar = false"
+            >
+                Закрыть
+            </v-btn>
+        </v-snackbar>
     </div>
 </template>
 
@@ -123,6 +136,7 @@
         name: "RegisterModal",
         data: vm => ({
             snackbar: false,
+            snackbarSuccess: false,
             timeout: 2000,
             dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
             date: new Date().toISOString().substr(0, 10),
@@ -196,6 +210,7 @@
                             this.axios.post('http://dinner-near.tw1.ru/regist', object)
                             .then(resp => {
                                 this.show = false;
+                                this.snackbarSuccess = true;
                             }).catch(c => {
                                 this.snackbar = true;
                             });

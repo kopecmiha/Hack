@@ -11,8 +11,8 @@
                             </v-col>
                             <v-col cols="9" class="user-info">
                                 <!--profile info-->
-                                {{$store.state.userInfo.fio}} <br>
-                                Год рождения: {{$store.state.userInfo.date.getFullYear()}}
+                                {{$store.state.userInfo.FIO}} <br>
+                                Год рождения: {{new Date($store.state.userInfo.birthday_date).getFullYear()}}
                             </v-col>
                         </v-row>
                     </v-col>
