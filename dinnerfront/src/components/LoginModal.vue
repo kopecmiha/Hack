@@ -4,6 +4,7 @@
             <div class="login">
                 <div class="login-title">Вход</div>
                 <div class="login-form">
+                    <v-divider></v-divider>
                     <v-form
                             ref="form"
                             v-model="valid"
@@ -26,6 +27,7 @@
                                 prepend-icon='lock'
                         ></v-text-field>
                     </v-form>
+                    <v-divider></v-divider>
                     <div class="my-2">
                         <v-btn class="login-button" large color="red" v-on:click="submit()">Войти</v-btn>
                     </div>
@@ -64,7 +66,35 @@
         },
         methods: {
             submit() {
-                alert(this.form);
+                if (this.$refs.form.validate()) {
+                    var json = JSON.stringify(this.form);
+
+                    if (this.$store.state.prod) {
+                        this.axios.post('/api/login', this.form)
+                            .then(resp => {
+                                this.loginPass();
+                            });
+                    } else {
+                        this.loginPass();
+                    }
+                }
+            },
+            loginPass() {
+                // get user info
+                if (this.$store.state.prod) {
+                    this.axios.post('/api/getuserinfo')
+                        .then(resp => {
+                            this.pushUserInfo(resp.data);
+                        });
+                } else {
+                    this.pushUserInfo({
+                        fio: "Иванов Иван Иванович"
+                    });
+                }
+            },
+            pushUserInfo(data) {
+                this.$store.commit('userinfo', data)
+                this.show = false;
             }
         }
     }
