@@ -14,7 +14,6 @@ from flask_wtf import FlaskForm
 
 
 
-#cors =  CORS(dinner,  resources= { r"/*":  {"origins": "*"}}) 
 
 application = dinner
 dinner.secret_key = 'yoг newer newer newer newer newer now this secret key'
@@ -49,12 +48,21 @@ def data_load():
 			image_file.write(img)
 			path_list += (r"http://dinner-near.tw1.ru" + path_wr + "::")
 	price = str(json["price"])
-	FIO = str(json["FIO"])
+	User_ID = str(json["User_ID"])
 	lat = str(json["lat"])
 	longi = str(json["long"])
 	address = str(json["address"])
-	cursor.execute("insert into dinner_near (title, description, images, price, FIO, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + FIO + "','" + lat + "','" + longi + "','" + address + "')")
-	conn.commit()
+	cursor.execute("SELECT place_count FROM dinner_users WHERE id IN (" + User_ID + ")")
+	(check,) = cursor.fetchone()
+	if check:
+		cursor.execute("DELETE FROM dinner_near WHERE User_ID = " + User_ID)
+		conn.commit()
+		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "')")
+		conn.commit()
+	else:
+		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "')")
+		cursor.execute("UPDATE dinner_user SET place_count = %s WHERE id IN (" + User_ID + ")", (1))
+		conn.commit()
 	conn.close()
 	return make_response("", 200)
 
@@ -62,14 +70,32 @@ def data_load():
 @dinner.route('/database/point_view/<ID>', methods=['GET'])
 def data_view(ID):
 	check_summ = 0
+	json2 = None
 	cursor.execute("SELECT * FROM dinner_near WHERE id IN (" + ID + ")")
 	res = cursor.fetchone()
 	if res is not None:
 		View = res
+		User_ID = str(View[3])
+		cursor.execute("SELECT * FROM dinner_users WHERE id IN (" + User_ID + ")")
+		User = cursor.fetchone()
+		if User is not None:
+			View2 = User
+			json2 = {"id" : View2[0],
+				"email" : View2[1],
+        		"create_time" : View2[3],
+        		"pasport_number" :  View2[4],
+        		"birthday_date" : View2[5],
+        		"pasport_photo" : View2[6],
+        		"avatar" : View2[7],
+        		"sex" : View2[8],
+        		"FIO" : View2[9],
+				"miting_count" : View2[10],
+				"place_count" : View2[11]
+				}
 		json = {"id" : View[0],
 				"title" : View[1],
         		"description" : View[2],
-        		"FIO" :  View[3],
+        		"User" :  json2,
         		"price" : View[4],
         		"lat" : View[5],
         		"long" : View[6],
@@ -95,7 +121,9 @@ def user_view(ID):
         		"avatar" : View[7],
         		"sex" : View[8],
         		"FIO" : View[9],
-				"miting_count" : View[10]}
+				"miting_count" : View[10],
+				"place_count" : View[11]
+		}
 	else:
 		json = None
 	return jsonify(json)
@@ -111,7 +139,7 @@ def all_view():
 		json = {"id" : View[0],
 				"title" : View[1],
         		"description" : View[2],
-        		"FIO" :  View[3],
+        		"User_ID" :  View[3],
         		"price" : View[4],
         		"lat" : View[5],
         		"long" : View[6],
@@ -212,3 +240,4 @@ def login():
 		return str(account)
 	else:
 		return make_response("error", 500)
+
