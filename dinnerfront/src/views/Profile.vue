@@ -5,18 +5,32 @@
                 <v-row>
                     <v-col cols="9">
                         <v-row>
-                            <v-col cols="6">
+                            <v-col cols="3">
                                 <!--avatar-->
-                                
+                                <img class="avatar" src="../assets/no-avatar.jpg">
                             </v-col>
-                            <v-col cols="6">
+                            <v-col cols="9" class="user-info">
                                 <!--profile info-->
-
+                                {{$store.state.userInfo.fio}} <br>
+                                Год рождения: {{$store.state.userInfo.date.getFullYear()}}
                             </v-col>
                         </v-row>
                     </v-col>
                     <v-col cols="3">
-
+                        <div>
+                            <v-rating
+                                    v-model="rating1"
+                                    background-color="red lighten-3"
+                                    color="red"
+                            ></v-rating>
+                        </div>
+                        <div>
+                            <v-rating
+                                    v-model="rating2"
+                                    background-color="red lighten-3"
+                                    color="red"
+                            ></v-rating>
+                        </div>
                     </v-col>
                 </v-row>
             </v-container>
@@ -33,26 +47,24 @@
 
                 <v-tab href="#tab-1">
                     О пользователе
-                    <v-icon>mdi-phone</v-icon>
+                    <v-icon>mdi-account</v-icon>
                 </v-tab>
 
                 <v-tab href="#tab-2">
-                    Подписки
-                    <v-icon>mdi-heart</v-icon>
-                </v-tab>
-
-                <v-tab href="#tab-3">
                     Настройки
-                    <v-icon>mdi-account-box</v-icon>
+                    <v-icon>mdi-settings</v-icon>
                 </v-tab>
             </v-tabs>
 
             <v-tabs-items v-model="tab">
-                <v-tab-item
-                        v-for="i in 3"
-                        :key="i"
-                        :value="'tab-' + i"
-                >
+                <v-tab-item value="tab-1">
+                    <v-container>
+                        <v-card flat>
+                            <v-card-text>{{ text }}</v-card-text>
+                        </v-card>
+                    </v-container>
+                </v-tab-item>
+                <v-tab-item value="tab-2">
                     <v-container>
                         <v-card flat>
                             <v-card-text>{{ text }}</v-card-text>
@@ -68,12 +80,20 @@
     export default {
         name: "Profile",
         data: () => ({
-            tab: 0,
-            text: "123"
+            tab: "tab-1",
+            text: "123",
+            rating1: 2,
+            rating2: 2
         })
     }
 </script>
 
 <style scoped>
-
+    .avatar {
+        width: 200px ;
+    }
+    .user-info {
+        font-weight: bolder;
+        font-size: 1.25em;
+    }
 </style>

@@ -17,7 +17,8 @@ const store = new Vuex.Store({
     prod: Vue.config.productionTip,
     isLogin: false,
     userInfo: {
-      fio: ""
+      fio: "",
+      date: new Date()
     }
   },
   mutations: {
