@@ -50,7 +50,7 @@
                     <v-icon>mdi-account</v-icon>
                 </v-tab>
 
-                <v-tab href="#tab-2">
+                <v-tab href="#tab-2" @click="tab2load()">
                     Настройки
                     <v-icon>mdi-settings</v-icon>
                 </v-tab>
@@ -77,69 +77,11 @@
                                     hide-details>
                             </v-switch>
                             <v-col cols="12" md="6">
-                                <v-form>
-                                    <v-text-field
-                                            label="Заголовок"
-                                    ></v-text-field>
-                                </v-form>
-                                <v-textarea
-                                        solo
-                                        name="input-7-4"
-                                        label="Описание точки"
-                                        class="mt-5"
-                                ></v-textarea>
-                                <!--Price-->
-                                <v-col cols="12" sm="6" md="3">
-                                    <v-text-field
-                                            placeholder="Цена"
-                                            prepend-icon="mdi-cash"
-                                    ></v-text-field>
-                                </v-col>
-                                <!-- Calendar-->
-                                <v-col cols="12" lg="6">
-                                    <v-menu
-                                            ref="menu1"
-                                            v-model="menu1"
-                                            :close-on-content-click="false"
-                                            transition="scale-transition"
-                                            offset-y
-                                            full-width
-                                            max-width="290px"
-                                            min-width="290px"
-                                    >
-                                        <template v-slot:activator="{ on }">
-                                            <v-text-field
-                                                    v-model="dateFormatted"
-                                                    label="Дата"
-                                                    hint="Месяц/День/Год"
-                                                    persistent-hint
-                                                    prepend-icon="event"
-                                                    @blur="date = parseDate(dateFormatted)"
-                                                    v-on="on"
-                                            ></v-text-field>
-                                        </template>
-                                        <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
-                                    </v-menu>
-                                </v-col>
 
                                 <!-- modal button for map -->
                                 <v-row>
-                                    <v-dialog v-model="dialog" persistent max-width="290">
-                                        <template v-slot:activator="{ on }">
-                                            <v-btn color="red" dark v-on="on">Сменить местоположение</v-btn>
-                                        </template>
-                                        <v-card>
-                                            <v-card-title class="headline"></v-card-title>
-                                            <v-card-text></v-card-text>
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn color="green darken-1" text @click="dialog = false">Disagree
-                                                </v-btn>
-                                                <v-btn color="green darken-1" text @click="dialog = false">Agree</v-btn>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-dialog>
-                                    <v-btn class="ml-3" color="red" style="color: #fff">Сохранить</v-btn>
+                                    <v-btn color="red" dark @click="mapRoute()">Сменить местоположение</v-btn>
+                                    <v-btn class="ml-3" color="red" style="color: #fff" @click="submit()">Сохранить</v-btn>
                                 </v-row>
                             </v-col>
                         </v-card>
@@ -155,10 +97,34 @@
         name: "Profile",
         data: () => ({
             tab: "tab-1",
+            ex11: false,
             menu1: false,
             rating1: 2,
-            rating2: 2
-        })
+            rating2: 2,
+            dialog: false
+        }),
+        mounted: function() {
+        },
+        methods: {
+            submit() {
+                this.axios.post('http://dinner-near.tw1.ru/status', {
+                    status: this.ex11? 1: 0,
+                    User_ID: this.$store.state.userInfo.id
+                })
+            },
+            init() {
+
+            },
+            tab2load(){
+                this.axios.get('http://dinner-near.tw1.ru/user_id_status/'+this.$store.state.userInfo.id).then(a => {
+                    this.ex11 = a.data[0] === 1;
+                });
+            },
+            mapRoute() {
+                this.$store.commit('addMeetingOn');
+                this.$router.push('map');
+            }
+        }
     }
 </script>
 

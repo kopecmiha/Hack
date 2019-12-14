@@ -17,7 +17,8 @@ const store = new Vuex.Store({
     prod: Vue.config.productionTip,
     isLogin: false,
     userInfo: {
-    }
+    },
+    isAddMeeting: false
   },
   mutations: {
     userinfo (state, payload) {
@@ -28,6 +29,12 @@ const store = new Vuex.Store({
     logout(state) {
       state.isLogin = false;
       localStorage.removeItem("l");
+    },
+    addMeetingOn(state) {
+      state.isAddMeeting = true;
+    },
+    addMeetingOff(state) {
+      state.isAddMeeting = false;
     }
   }
 });

@@ -2,9 +2,10 @@
     <div>
         <v-btn
                 color="red"
-                @click="isAddMeeting = !isAddMeeting"
+                v-if="$store.state.isAddMeeting"
+                @click="$store.commit('addMeetingOn')"
                 style="position: absolute; z-index: 1; color: white;"
-        >{{isAddMeeting ? 'Выберите место на карте' : 'Добавить'}}</v-btn>
+        >Выберите место на карте</v-btn>
         <div id="map">
         </div>
         <v-bottom-sheet v-model="sheet" v-if="sheet" inset>
@@ -12,16 +13,16 @@
                 <div class="px-4 py-4 text-center">
                     <div class="marker-title">{{meetingToOpen.title}}</div>
                     <div>
-                        Добавил: Юзер
-<!--                        Добавил: {{meetingToOpen.User.FIO}}-->
+                        Добавил: {{meetingToOpen.User.FIO}}
                     </div>
                     <p> Цена: {{meetingToOpen.price}}</p>
-                    <p class="text-left">Адрес: {{meetingToOpen.address}}</p>
-                    <p class="text-left mb-4">{{meetingToOpen.description}}</p>
+                    <p>Адрес: {{meetingToOpen.address}}</p>
+                    <p class="mb-4">{{meetingToOpen.description}}</p>
                     <v-btn class="text-white"
                            color="red"
                            @click="sheet = !sheet"
                     >Закрыть</v-btn>
+
 
 <!--                    <div v-if="meetingToOpen.images" style="height: 200px;-->
 <!--                                    overflow-x: auto;-->
@@ -69,6 +70,11 @@
                                       accept="image/png, image/jpeg, image/bmp"
                                       prepend-icon="mdi-camera"
                                       @change="addImages"></v-file-input>
+                        <div v-show="newPlace.images.length > 0" style="height: 200px;
+overflow-x: auto; white-space: nowrap;
+overflow-y: hidden; text-align: left;">
+                            <img style="height: 100%; margin-right: 10px;" v-for="image of newPlace.images" :src="'data:image/jpg;base64,' + image">
+                        </div>
 <!--                        <div style="height: 200px;-->
 <!--                                overflow-x: auto;-->
 <!--                                white-space: nowrap;-->
@@ -120,13 +126,12 @@
                 sheet: false,
                 addPlaceSheet: false,
                 meetingToOpen: {},
-                isAddMeeting: false,
                 newPlace: {
                     title: '',
                     description: '',
                     images: [],
                     price: 0,
-                    FIO: '',
+                    User_ID: 0,
                     address: '',
                     lat: 0,
                     long: 0
@@ -138,6 +143,7 @@
         },
         methods: {
             init: function () {
+                this.newPlace.User_ID = this.$store.state.userInfo.id;
                 const app_id = 'UdRH6PlISTlADYsW6mzl';
                 const app_code = 'lfrrTheP9nBedeJyy1NtIA';
                 const app_key = 'jpqCEYkwL543JRJJb12V31gUT9AiwShHNSyqCTg4S4w';
@@ -186,8 +192,8 @@
                     const coords = window.map.screenToGeo(event.currentPointer.viewportX,
                         event.currentPointer.viewportY);
                     console.log(coords);
-                    if(this.isAddMeeting) {
-                        this.isAddMeeting = false;
+                    if(this.$store.state.isAddMeeting) {
+                        this.$store.commit('addMeetingOff');
                         this.addPlaceSheet = true;
 
                         this.newPlace.lat = coords.lat;
@@ -241,26 +247,44 @@
                 marker.setData(meetingData);
                 this.meetingGroup.addObject(marker);
             },
-            addImages: async function (el) {
+            addImages: async function () {
                 this.newPlace.images = [];
-                for (const image of document.querySelector('input[type=file]').files) {
-                    this.newPlace.images.push(await this.getBase64(image));
-                }
+                const self = this;
+                setTimeout(async function() {
+                    for (const image of document.querySelector('input[type=file]').files) {
+                        self.newPlace.images.push(await self.getBase64(image));
+                    }
+                }, 100);
             },
             submitAddPlace: async function () {
+                this.newPlace.User_ID = this.$store.state.userInfo.id;
                 this.axios.post('http://dinner-near.tw1.ru/database/point_add', this.newPlace)
                     .then(resp => {
+                        this.meetingGroup.getObjects().forEach(icon => {
+                            if(icon.getData().User.id === this.$store.state.userInfo.id) {
+                                this.meetingGroup.removeObject(icon);
+                            }
+                        });
                         console.log(resp);
                         const places = JSON.parse(localStorage.getItem('cashMeetings'));
                         places.push(this.newPlace);
                         localStorage.setItem('cashMeetings', JSON.stringify(places));
-                        this.addIconToMap(this.newPlace);
+                        this.addIconToMap({
+                            title: this.newPlace.title,
+                            description: this.newPlace.description,
+                            images: this.newPlace.images,
+                            price: this.newPlace.price,
+                            address: this.newPlace.address,
+                            lat: this.newPlace.lat,
+                            long: this.newPlace.long,
+                            User: this.$store.state.userInfo
+                        });
                         this.newPlace = {
                             title: '',
                             description: '',
                             images: [],
                             price: 0,
-                            FIO: '',
+                            User_ID: this.$store.state.userInfo.id,
                             address: '',
                             lat: 0,
                             long: 0
