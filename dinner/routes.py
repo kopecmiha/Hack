@@ -47,7 +47,7 @@ def data_load():
 @dinner.route('/database/point_view/<ID>', methods=['GET'])
 def data_view(ID):
 	check_summ = 0
-	cursor.execute("SELECT * FROM dinner_near WHERE id IN (" + ID + ")")
+	cursor.execute("SELECT * FROM dinner_near WHERE id = %s", (ID))
 	res = cursor.fetchone()
 	if res is not None:
 		View = res
