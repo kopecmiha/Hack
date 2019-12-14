@@ -1,7 +1,6 @@
 <template>
     <div>
         <v-btn
-
                 color="red"
                 @click="isAddMeeting = !isAddMeeting"
                 style="position: absolute; z-index: 1; color: white;"
@@ -9,43 +8,39 @@
         <div id="map">
         </div>
         <v-bottom-sheet v-model="sheet" v-if="sheet" inset>
-            <v-sheet class="text-center" height="600px" style="overflow: auto;">
-                <div class="text-right px-4 py-4" style="height: 600px;">
-                    <div class="text-right px-4 py-4">
-                        <span style="float: left;">Добавил: {{meetingToOpen.FIO}}</span>
-                        <v-btn
-
-                                color="red"
-                                @click="sheet = !sheet"
-                        >Закрыть</v-btn>
+            <v-sheet class="text-center" style="overflow: auto;">
+                <div class="px-4 py-4 text-center">
+                    <div class="marker-title">{{meetingToOpen.title}}</div>
+                    <div>
+                        Добавил: Юзер
+<!--                        Добавил: {{meetingToOpen.User.FIO}}-->
                     </div>
-
-                    <div v-if="meetingToOpen.images" style="height: 200px;
-                                    overflow-x: auto;
-                                    white-space: nowrap;
-                                    overflow-y: hidden;">
-                        <img style="height: 100%; margin-right: 10px;" v-for="image of meetingToOpen.images" :src="image">
-                    </div>
-
-                    <h3>{{meetingToOpen.title}} (цена: {{meetingToOpen.price}})</h3>
+                    <p> Цена: {{meetingToOpen.price}}</p>
+                    <p class="text-left">Адрес: {{meetingToOpen.address}}</p>
                     <p class="text-left mb-4">{{meetingToOpen.description}}</p>
-                    <p class="text-left">{{meetingToOpen.address}}</p>
+                    <v-btn class="text-white"
+                           color="red"
+                           @click="sheet = !sheet"
+                    >Закрыть</v-btn>
+
+<!--                    <div v-if="meetingToOpen.images" style="height: 200px;-->
+<!--                                    overflow-x: auto;-->
+<!--                                    white-space: nowrap;-->
+<!--                                    overflow-y: hidden;">-->
+<!--                        <img style="height: 100%; margin-right: 10px;" v-for="image of meetingToOpen.images" :src="image">-->
+<!--                    </div>-->
+
                 </div>
             </v-sheet>
         </v-bottom-sheet>
         <v-bottom-sheet v-model="addPlaceSheet" v-if="addPlaceSheet" inset>
-            <v-sheet class="text-center" height="600px" style="overflow: auto;">
-                <div class="text-right px-4 py-4" style="height: 840px;">
-                    <span style="float: left;">Добавьте новое место</span>
-                    <v-btn
-
-                            color="red"
-                            @click="addPlaceSheet = !addPlaceSheet"
-                    >Закрыть</v-btn>
-
+            <v-sheet class="text-center" style="overflow: auto;">
+                <div class="text-right px-4 py-4">
                     <v-form
                             ref="form"
                     >
+                        <div style="float: left; font-size: 1.5em; display: contents">Добавьте новое место</div>
+
                         <v-text-field
                                 class="mt-2"
                                 v-model="newPlace.title"
@@ -60,22 +55,26 @@
                                 required
                                 prepend-icon='lock'/>
 
-                        <v-text-field
-                                class="mt-2"
-                                label="Изображения"
-                                required
-                                prepend-icon='email'
-                                type="file"
-                                multiple
-                                accept="image/**"
-                                @change="addImages"/>
+<!--                        <v-text-field-->
+<!--                                class="mt-2"-->
+<!--                                label="Изображения"-->
+<!--                                required-->
+<!--                                prepend-icon='email'-->
+<!--                                type="file"-->
+<!--                                multiple-->
+<!--                                accept="image/**"-->
+<!--                                @change="addImages"/>-->
 
-                        <div style="height: 200px;
-                                overflow-x: auto;
-                                white-space: nowrap;
-                                overflow-y: hidden;">
-                            <img style="height: 100%; margin-right: 10px;" v-for="image of newPlace.images" :src="'data:image/jpg;base64,' + image">
-                        </div>
+                        <v-file-input multiple label="Фото"
+                                      accept="image/png, image/jpeg, image/bmp"
+                                      prepend-icon="mdi-camera"
+                                      @change="addImages"></v-file-input>
+<!--                        <div style="height: 200px;-->
+<!--                                overflow-x: auto;-->
+<!--                                white-space: nowrap;-->
+<!--                                overflow-y: hidden;">-->
+<!--                            <img style="height: 100%; margin-right: 10px;" v-for="image of newPlace.images" :src="'data:image/jpg;base64,' + image">-->
+<!--                        </div>-->
 
                         <v-text-field
                                 class="mt-2"
@@ -85,23 +84,26 @@
                                 type="number"
                                 prepend-icon='email'/>
 
-                        <v-text-field
-                                class="mt-2"
-                                v-model="newPlace.FIO"
-                                label="ФИО"
-                                required
-                                prepend-icon='email'/>
+<!--                        <v-text-field-->
+<!--                                class="mt-2"-->
+<!--                                v-model="newPlace.FIO"-->
+<!--                                label="ФИО"-->
+<!--                                required-->
+<!--                                prepend-icon='email'/>-->
 
                         <v-text-field
                                 class="mt-2"
                                 v-model="newPlace.address"
-                                label="Адресс"
+                                label="Адрес"
                                 required
                                 prepend-icon='email'/>
                         <v-divider/>
                     </v-form>
                     <div class="my-2">
-                        <v-btn class="login-button" large color="red" @click="submitAddPlace()">Добавить место</v-btn>
+                        <v-btn color="red" class="text-white"
+                               @click="addPlaceSheet = !addPlaceSheet" style="float: left"
+                        >Закрыть</v-btn>
+                        <v-btn class="login-button text-white" color="red" style="float: right" @click="submitAddPlace()">Добавить место</v-btn>
                     </div>
                 </div>
             </v-sheet>
@@ -211,17 +213,6 @@
             },
             getMeetingPlaces: function() {
                 fetch('http://dinner-near.tw1.ru/database/point_view_all').then(response => response.json()).then(data => {
-                    /*for (let i = 0; i < 10; i++) {
-                        data.push({
-                            "title" : "test " + i,
-                            "description" : "test " + i,
-                            "images" : "test",
-                            "price" : 100,
-                            "FIO" : "Зубенко Михаил Петрович",
-                            "lat" : 55.671637109062395 + Math.random() * (55.8693982348987 - 55.58015026546139),
-                            "long" : 37.45380552882537 + Math.random() * (37.813446373061424 - 37.266876548842674)
-                        });
-                    }*/
 
                     data.forEach(place => {
                         if (!isNaN(place.lat) && !isNaN(place.long))
@@ -298,5 +289,8 @@
     }
     .v-dialog--active {
         overflow: auto;
+    }
+    .text-white {
+        color: white;
     }
 </style>
