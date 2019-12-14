@@ -13,18 +13,19 @@ from flaskext.mysql import MySQL
 from flask_wtf import FlaskForm
 
 
-CORS(dinner)
+
+#cors =  CORS(dinner,  resources= { r"/*":  {"origins": "*"}}) 
 
 application = dinner
 dinner.secret_key = 'yoг newer newer newer newer newer now this secret key'
 mysql = MySQL()
-dinner.config['MYSQL_DATABASE_USER'] = 'db_name'
-dinner.config['MYSQL_DATABASE_PASSWORD'] = 'db_pass'
-dinner.config['MYSQL_DATABASE_DB'] = 'db_name'
+dinner.config['MYSQL_DATABASE_USER'] = 'cp36696_admireso'
+dinner.config['MYSQL_DATABASE_PASSWORD'] = 'social.admire'
+dinner.config['MYSQL_DATABASE_DB'] = 'cp36696_admireso'
 dinner.config['MYSQL_DATABASE_HOST'] = 'localhost'
 dinner.config['UPLOAD_FOLDER'] = "/home/c/cp36696/dinner_near/public_html/dinner/images"
 mysql.init_app(dinner)
-
+CORS(dinner)
 conn = mysql.connect()
 cursor = conn.cursor()
 
@@ -42,16 +43,17 @@ def data_load():
 	images = json["images"]
 	for i in images:
 		img = base64.b64decode(i)
-		path = r"home/c/cp36696/dinner_near/public_html/dinner/images/image_point" + str(time.time()) + str(random.randint(0, 999)) + ".png"
-		with open(path, "wb") as image_file:
+		path = r"home/c/cp36696/dinner_near/public_html"
+		path_wr = r"/dinner/images/image_point" + str(time.time()) + str(random.randint(0, 999)) + ".png"
+		with open(path + path_wr, "wb") as image_file:
 			image_file.write(img)
-			path_list += (path + "::")
+			path_list += (r"http://dinner-near.tw1.ru" + path_wr + "::")
 	price = str(json["price"])
 	FIO = str(json["FIO"])
 	lat = str(json["lat"])
 	longi = str(json["long"])
 	address = str(json["address"])
-	cursor.execute("insert into dinner_near (title, description, images, price, FIO, latitude, longitude, address) values ('" + title + "','"  + description + "','" path_list "','" + price + "','" + FIO + "','" + lat + "','" + longi + "','" + address + "')")
+	cursor.execute("insert into dinner_near (title, description, images, price, FIO, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + FIO + "','" + lat + "','" + longi + "','" + address + "')")
 	conn.commit()
 	conn.close()
 	return make_response("", 200)
@@ -65,14 +67,14 @@ def data_view(ID):
 	if res is not None:
 		View = res
 		json = {"id" : View[0],
-			"title" : View[1],
-        	"description" : View[2],
-        	"images" :  View[3],
-        	"price" : View[4],
-        	"FIO" : View[5],
-        	"lat" : View[6],
-        	"long" : View[7],
-        	"address" : View[8]}
+				"title" : View[1],
+        		"description" : View[2],
+        		"FIO" :  View[3],
+        		"price" : View[4],
+        		"lat" : View[5],
+        		"long" : View[6],
+        		"images" : View[7],
+        		"address" : View[8]}
 	else:
 		json = None
 	return jsonify(json)
@@ -85,15 +87,15 @@ def user_view(ID):
 	if res is not None:
 		View = res
 		json = {"id" : View[0],
-			"email" : View[1],
-        	"create_time" : View[2],
-        	"pasport_number" :  View[3],
-        	"birthday_date" : View[4],
-        	"pasport_photo" : View[5],
-        	"avatar" : View[6],
-        	"sex" : View[7],
-        	"FIO" : View[8],
-			"miting_count" : View[9]}
+				"email" : View[1],
+        		"create_time" : View[3],
+        		"pasport_number" :  View[4],
+        		"birthday_date" : View[5],
+        		"pasport_photo" : View[6],
+        		"avatar" : View[7],
+        		"sex" : View[8],
+        		"FIO" : View[9],
+				"miting_count" : View[10]}
 	else:
 		json = None
 	return jsonify(json)
@@ -137,13 +139,15 @@ def regist():
 	cursor.execute("SELECT * FROM dinner_users WHERE email = %s", (email))
 	check = cursor.fetchone()
 	if check == None:
-		path = r"home/c/cp36696/dinner_near/public_html/dinner/images/image" + str(time.time()) + ".png"
-		path_av = r"home/c/cp36696/dinner_near/public_html/dinner/images/image_av" + str(time.time()) + ".png"
-		with open(path, "wb") as image_file:
+		path = r"home/c/cp36696/dinner_near/public_html"
+		path_wr = r"/dinner/images/image" + str(time.time()) + str(random.randint(0, 999)) + ".png"
+		path_av = r"home/c/cp36696/dinner_near/public_html"
+		path_av_wr = r"/dinner/images/image_av" + str(time.time()) + str(random.randint(0, 999)) + ".png"
+		with open(path + path_wr, "wb") as image_file:
 			image_file.write(pasport_photo)
-		with open(path_av, "wb") as image_file_av:
+		with open(path_av + path_av_wr, "wb") as image_file_av:
 			image_file_av.write(avatar)
-		cursor.execute("insert into dinner_users (email, password, create_time, pasport_number, birthday_date, pasport_photo, avatar, sex, FIO, miting_count) values ('" + email + "','"  + password + "','" + create_time + "','" + pasport_number + "','" + birthday_date + "','" + path + "','" + path_av + "','" + sex + "','" + fio + "','" + miting + "')")
+		cursor.execute("insert into dinner_users (email, password, create_time, pasport_number, birthday_date, pasport_photo, avatar, sex, FIO, miting_count) values ('" + email + "','"  + password + "','" + create_time + "','" + pasport_number + "','" + birthday_date + "','" + r"http://dinner-near.tw1.ru" + path_wr + "','" + r"http://dinner-near.tw1.ru" + path_av_wr + "','" + sex + "','" + fio + "','" + miting + "')")
 		conn.commit()
 		conn.close()
 		return make_response("", 200)
@@ -195,15 +199,16 @@ def update():
 	conn.close()
 	return make_response("", 200)
 	
-@dinner.route('/login', methods=['GET', 'POST'])
+@dinner.route('/login', methods=['POST'])
 def login():
 	data = request.data
 	json = eval(data)
 	email = str(json["email"])
 	password = str(json["password"])
-	cursor.execute('SELECT * FROM dinner_users WHERE email = %s AND password = %s', (email, password))
-	account = cursor.fetchone()
+	cursor.execute('SELECT id FROM dinner_users WHERE email = %s AND password = %s', (email, password))
+	(account,) = cursor.fetchone()
 	if account:
-		return make_response("", 200)
+		#return make_response("", 200)
+		return str(account)
 	else:
-		return make_response("", 500)
+		return make_response("error", 500)
