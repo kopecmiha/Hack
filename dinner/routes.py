@@ -102,14 +102,3 @@ def login():
 		return make_response("", 200)
 	else:
 		return make_response("", 500)
-	'''
-@dinner.route('/home', methods=['GET'])
-def home():
-    if 'loggedin' in session:
-    	cursor.execute('SELECT FIO FROM dinner_users WHERE id = %s', (session['id']))
-    	(FIO,) = cursor.fetchone()
-    	return str("Привет" + FIO)
-    else:
-    	return str("хуево")
-'''
-	
