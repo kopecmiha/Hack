@@ -14,9 +14,9 @@ dinner.secret_key = 'yoг newer newer newer newer newer now this secret key'
 application = dinner
 
 mysql = MySQL()
-dinner.config['MYSQL_DATABASE_USER'] = 'cp36696_admireso'
-dinner.config['MYSQL_DATABASE_PASSWORD'] = 'social.admire'
-dinner.config['MYSQL_DATABASE_DB'] = 'cp36696_admireso'
+dinner.config['MYSQL_DATABASE_USER'] = 'db_user'
+dinner.config['MYSQL_DATABASE_PASSWORD'] = 'db_pass'
+dinner.config['MYSQL_DATABASE_DB'] = 'db_user'
 dinner.config['MYSQL_DATABASE_HOST'] = 'localhost'
 dinner.config['UPLOAD_FOLDER'] = "/home/c/cp36696/dinner_near/public_html/dinner/images"
 mysql.init_app(dinner)
