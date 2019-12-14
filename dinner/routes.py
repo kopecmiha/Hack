@@ -1,11 +1,9 @@
-#!/home/c/cp36696/myenv/bin/python3
-from dinner import dinner
+#from dinner import dinner
 import os
 import sys
 import json
 import request
 from flask import Flask, request, jsonify, render_template, flash, redirect, session, url_for, make_response
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flaskext.mysql import MySQL
 from flask_wtf import FlaskForm
@@ -14,7 +12,6 @@ from flask_wtf import FlaskForm
 CORS(dinner)
 dinner.secret_key = 'yoг newer newer newer newer newer now this secret key'
 application = dinner
-db = SQLAlchemy(dinner)
 
 mysql = MySQL()
 dinner.config['MYSQL_DATABASE_USER'] = 'cp36696_admireso'
@@ -77,10 +74,11 @@ def regist():
 	avatar = str(json["avatar"])
 	sex = str(json["sex"])
 	fio = str(json["fio"])
+	miting = str(0)
 	cursor.execute("SELECT * FROM dinner_users WHERE email = %s", (email))
 	check = cursor.fetchone()
 	if check == None:
-		cursor.execute("insert into dinner_users (email, password, create_time, pasport_number, birthday_date, pasport_photo, avatar, sex, FIO) values ('" + email + "','"  + password + "','" + create_time + "','" + pasport_number + "','" + birthday_date + "','" + pasport_photo + "','" + avatar + "','" + sex + "','" + fio + "')")
+		cursor.execute("insert into dinner_users (email, password, create_time, pasport_number, birthday_date, pasport_photo, avatar, sex, FIO, miting_count) values ('" + email + "','"  + password + "','" + create_time + "','" + pasport_number + "','" + birthday_date + "','" + pasport_photo + "','" + avatar + "','" + sex + "','" + fio + "','" + miting + "')")
 		conn.commit()
 		conn.close()
 		return make_response("", 200)
@@ -99,3 +97,4 @@ def login():
 		return make_response("", 200)
 	else:
 		return make_response("", 500)
+
