@@ -96,9 +96,6 @@ def login():
 	cursor.execute('SELECT * FROM dinner_users WHERE email = %s AND password = %s', (email, password))
 	account = cursor.fetchone()
 	if account:
-		session['loggedin'] = True
-		session['id'] = account[0]
-		session['username'] = account[1]
 		return make_response("", 200)
 	else:
 		return make_response("", 500)
