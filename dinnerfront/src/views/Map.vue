@@ -21,48 +21,49 @@
                 <div class="px-4 py-4 text-center">
                     <div class="marker-title">{{meetingToOpen.title}}</div>
                     <div>
-                        Добавил: {{meetingToOpen.User.FIO}}
+                        <router-link :to="'/profileview/'+meetingToOpen.User.id">Добавил: {{meetingToOpen.User.FIO}}</router-link>
                     </div>
                     <p> Цена: {{meetingToOpen.price}}</p>
                     <p>Адрес: {{meetingToOpen.address}}</p>
                     <p class="mb-4">{{meetingToOpen.description}}</p>
-                    <v-btn class="text-white"
+
+
+                    <div style="height: 200px;
+                                    overflow-x: auto;
+                                    white-space: nowrap;
+                                    overflow-y: hidden;" v-if="meetingToOpen.images.length != 0">
+                        <img style="height: 100%; margin-right: 10px;" v-for="image of meetingToOpen.images" :src="image">
+                    </div>
+
+                    <v-btn class="text-white mt-2"
                            color="red"
                            @click="sheet = !sheet"
                     >Закрыть</v-btn>
 
-
-<!--                    <div v-if="meetingToOpen.images" style="height: 200px;-->
-<!--                                    overflow-x: auto;-->
-<!--                                    white-space: nowrap;-->
-<!--                                    overflow-y: hidden;">-->
-<!--                        <img style="height: 100%; margin-right: 10px;" v-for="image of meetingToOpen.images" :src="image">-->
-<!--                    </div>-->
-
                 </div>
             </v-sheet>
         </v-bottom-sheet>
-        <v-bottom-sheet v-model="addPlaceSheet" v-if="addPlaceSheet" inset>
+        <v-dialog v-model="addPlaceSheet" v-if="addPlaceSheet">
             <v-sheet class="text-center" style="overflow: auto;">
                 <div class="text-right px-4 py-4">
                     <v-form
                             ref="form"
                     >
-                        <div style="float: left; font-size: 1.5em; display: contents">Добавьте новое место</div>
+                        <div style="font-size: 1.5em; text-align: center;">Добавьте новое место</div>
 
                         <v-text-field
                                 class="mt-2"
                                 v-model="newPlace.title"
                                 label="Название"
                                 required
-                                prepend-icon='email'/>
+                                prepend-icon='mdi-email'/>
 
                         <v-text-field
                                 class="mt-2"
                                 v-model="newPlace.description"
                                 label="Описание"
                                 required
-                                prepend-icon='lock'/>
+                                prepend-icon='mdi-lock'/>
 
 <!--                        <v-text-field-->
 <!--                                class="mt-2"-->
@@ -74,7 +75,7 @@
 <!--                                accept="image/**"-->
 <!--                                @change="addImages"/>-->
 
-                        <v-file-input multiple label="Фото"
+                        <v-file-input multiple label="Фото еды"
                                       accept="image/png, image/jpeg, image/bmp"
                                       prepend-icon="mdi-camera"
                                       @change="addImages"></v-file-input>
@@ -96,7 +97,7 @@ overflow-y: hidden; text-align: left;">
                                 label="Цена"
                                 required
                                 type="number"
-                                prepend-icon='email'/>
+                                prepend-icon='mdi-email'/>
 
 <!--                        <v-text-field-->
 <!--                                class="mt-2"-->
@@ -110,7 +111,7 @@ overflow-y: hidden; text-align: left;">
                                 v-model="newPlace.address"
                                 label="Адрес"
                                 required
-                                prepend-icon='email'/>
+                                prepend-icon='mdi-email'/>
                         <v-divider/>
                     </v-form>
                     <div class="my-2">
@@ -119,9 +120,10 @@ overflow-y: hidden; text-align: left;">
                         >Закрыть</v-btn>
                         <v-btn class="login-button text-white" color="red" style="float: right" @click="submitAddPlace()">Добавить место</v-btn>
                     </div>
+                    <br>
                 </div>
             </v-sheet>
-        </v-bottom-sheet>
+        </v-dialog>
     </div>
 </template>
 
@@ -274,9 +276,9 @@ overflow-y: hidden; text-align: left;">
                             }
                         });
                         console.log(resp);
-                        const places = JSON.parse(localStorage.getItem('cashMeetings'));
-                        places.push(this.newPlace);
-                        localStorage.setItem('cashMeetings', JSON.stringify(places));
+                        // const places = JSON.parse(localStorage.getItem('cashMeetings')) || [];
+                        // places.push(this.newPlace);
+                        // localStorage.setItem('cashMeetings', JSON.stringify(places));
                         this.addIconToMap({
                             title: this.newPlace.title,
                             description: this.newPlace.description,

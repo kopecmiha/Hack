@@ -34,8 +34,7 @@
         name: "FooterLayout",
         data: () => ({
             links: [
-                {name: 'Главная', href:'/'},
-                {name: 'О нас', href:'about'}
+                {name: 'Главная', href:'/'}
             ],
         }),
     }

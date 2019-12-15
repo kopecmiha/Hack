@@ -14,19 +14,19 @@
 
         <v-toolbar-items>
           <template v-if="$store.state.isLogin">
-            <v-btn text @click="$router.push('profile')">
-              <v-badge :overlap='true'>
-                <template v-slot:badge>0</template>
-                <v-icon>mdi-email</v-icon>
-              </v-badge>
-            </v-btn>
-            <v-btn text @click="$router.push('map')"><span class="routerlink">Карта</span></v-btn>
-            <v-btn text @click="$router.push('profile')"><span class="routerlink">Профиль</span></v-btn>
-            <v-btn text @click="$store.commit('logout')"><span class="routerlink">Выход</span></v-btn>
+<!--            <v-btn text @click="$router.push('profile')">-->
+<!--              <v-badge :overlap='true'>-->
+<!--                <template v-slot:badge>0</template>-->
+<!--                <v-icon>mdi-email</v-icon>-->
+<!--              </v-badge>-->
+<!--            </v-btn>-->
+            <v-btn text @click="$router.push('/map')" class="logo-button"><span class="routerlink">Карта</span></v-btn>
+            <v-btn text @click="$router.push('/profile')" class="logo-button"><span class="routerlink">Профиль</span></v-btn>
+            <v-btn text @click="$store.commit('logout')" class="logo-button"><span class="routerlink">Выход</span></v-btn>
           </template>
           <template v-if="!$store.state.isLogin">
-            <v-btn text @click.stop="showLogin=true"><span class="routerlink">Вход</span></v-btn>
-            <v-btn text @click.stop="showReg=true"><span class="routerlink">Регистрация</span></v-btn>
+            <v-btn text @click.stop="showLogin=true" class="logo-button"><span class="routerlink">Вход</span></v-btn>
+            <v-btn text @click.stop="showReg=true" class="logo-button"><span class="routerlink">Регистрация</span></v-btn>
           </template>
         </v-toolbar-items>
       </v-toolbar>
@@ -58,7 +58,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss">
     .notif {
       display: flex;
       align-items: center;
@@ -76,9 +76,23 @@ export default {
         font-size: 1.5em;
         font-family: 'Pacifico', cursive;
         padding-left: 0.5em;
+      @media (max-width: 540px) {
+        display: none;
+      }
     }
     .routerlink {
       text-decoration: none;
       color: #f44336
+    }
+    header {
+      height: 64px!important;
+      .v-toolbar__content {
+        height: 64px!important;
+      }
+    }
+    .logo-button {
+      @media (max-width: 360px) {
+        padding: 8px!important;
+      }
     }
 </style>

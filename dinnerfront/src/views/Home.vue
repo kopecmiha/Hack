@@ -19,16 +19,18 @@
             <v-row class="text-center">
                 <template>
                     <v-card
-                            class="mx-auto"
+                            class="mx-auto mt-4"
                             max-width="250"
+                            width="250"
                     >
                         <v-row align="center" justify="center">
                             <v-img
                                     max-width="200px"
-                                    src="../assets/Простота.png"
+                                    src="../assets/p.png"
                             >
                             </v-img>
                         </v-row>
+
 
                         <v-card-title class="pb-0 headline red--text text-center" style="display: block">Простота
                         </v-card-title>
@@ -42,13 +44,14 @@
 
                 <template>
                     <v-card
-                            class="mx-auto"
+                            class="mx-auto mt-4"
                             max-width="250"
+                            width="250"
                     >
                         <v-row align="center" justify="center">
                             <v-img
                                     max-width="200px"
-                                    src="../assets/Удобство.png"
+                                    src="../assets/y.png"
                             >
                             </v-img>
                         </v-row>
@@ -64,13 +67,14 @@
 
                 <template>
                     <v-card
-                            class="mx-auto"
+                            class="mx-auto mt-4"
                             max-width="250"
+                            width="250"
                     >
                         <v-row align="center" justify="center">
                             <v-img
                                     max-width="200px"
-                                    src="../assets/Актуальность.png"
+                                    src="../assets/a.png"
                             >
                             </v-img>
                         </v-row>
