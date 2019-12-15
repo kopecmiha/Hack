@@ -33,6 +33,7 @@ def hello_world():
     
 @dinner.route('/database/point_add', methods=['POST'])
 def data_load():
+	check = 0
 	path_list = ""
 	data = request.data
 	json = eval(data)
@@ -54,9 +55,12 @@ def data_load():
 	cursor.execute("SELECT place_count FROM dinner_users WHERE id IN (" + User_ID + ")")
 	(check,) = cursor.fetchone()
 	if check == 1:
+		active = str(0)
+		cursor.execute("SELECT active FROM dinner_near WHERE User_ID IN (" + User_ID + ")")
+		(active,) = cursor.fetchone()
 		cursor.execute("DELETE FROM dinner_near WHERE User_ID = " + User_ID)
 		conn.commit()
-		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "')")
+		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address, active) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "','" + str(active) + "')")
 		conn.commit()
 	else:
 		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "')")
@@ -64,6 +68,7 @@ def data_load():
 		conn.commit()
 	conn.close()
 	return make_response("", 200)
+	#return str(check)
 
 	
 @dinner.route('/database/point_view/<ID>', methods=['GET'])
@@ -282,3 +287,7 @@ def user_id_status(ID):
 	conn.commit()
 	conn.close()
 	return jsonify(cursor.fetchone())
+	
+@dinner.route('/index')
+def index():
+	return render_template('index.html')
