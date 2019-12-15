@@ -1,4 +1,3 @@
-#!/home/c/cp36696/myenv/bin/python3
 from dinner import dinner
 import os
 import time
@@ -54,14 +53,14 @@ def data_load():
 	address = str(json["address"])
 	cursor.execute("SELECT place_count FROM dinner_users WHERE id IN (" + User_ID + ")")
 	(check,) = cursor.fetchone()
-	if check:
+	if check == 1:
 		cursor.execute("DELETE FROM dinner_near WHERE User_ID = " + User_ID)
 		conn.commit()
 		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "')")
 		conn.commit()
 	else:
 		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "')")
-		cursor.execute("UPDATE dinner_user SET place_count = %s WHERE id IN (" + User_ID + ")", (1))
+		cursor.execute("UPDATE dinner_users SET place_count = %s WHERE id IN (" + User_ID + ")", (1))
 		conn.commit()
 	conn.close()
 	return make_response("", 200)
@@ -103,6 +102,7 @@ def data_view(ID):
         		"address" : View[8]}
 	else:
 		json = None
+	conn.close()
 	return jsonify(json)
 	
 @dinner.route('/database/user_view/<ID>', methods=['GET'])
@@ -126,6 +126,7 @@ def user_view(ID):
 		}
 	else:
 		json = None
+	conn.close()
 	return jsonify(json)
 	
 @dinner.route('/database/point_view_all', methods=['GET'])
@@ -133,19 +134,39 @@ def all_view():
 	cursor.execute("SELECT count(*) FROM dinner_near")
 	count = int(cursor.fetchone()[0])
 	arr = []
+	User = None
 	for i in range(0,count):
-		cursor.execute("SELECT * FROM dinner_near LIMIT %s, 1", (i))
+		cursor.execute("SELECT * FROM dinner_near WHERE active = 1 LIMIT %s, 1", (i))
 		View = cursor.fetchone()
-		json = {"id" : View[0],
+		if View:
+			User_ID = str(View[3])
+			cursor.execute("SELECT * FROM dinner_users WHERE id IN (" + User_ID + ")")
+			User = cursor.fetchone()
+			if User is not None:
+				View2 = User
+				json2 = {"id" : View2[0],
+					"email" : View2[1],
+        			"create_time" : View2[3],
+        			"pasport_number" :  View2[4],
+        			"birthday_date" : View2[5],
+        			"pasport_photo" : View2[6],
+        			"avatar" : View2[7],
+        			"sex" : View2[8],
+        			"FIO" : View2[9],
+					"miting_count" : View2[10],
+					"place_count" : View2[11]
+					}
+			json = {"id" : View[0],
 				"title" : View[1],
         		"description" : View[2],
-        		"User_ID" :  View[3],
+        		"User" :  json2,
         		"price" : View[4],
         		"lat" : View[5],
         		"long" : View[6],
         		"images" : View[7],
         		"address" : View[8]}
-		arr.append(json)
+			arr.append(json)
+	conn.close()
 	return jsonify(arr)
 	
 @dinner.route('/regist', methods=['POST'])
@@ -237,7 +258,27 @@ def login():
 	(account,) = cursor.fetchone()
 	if account:
 		#return make_response("", 200)
+		conn.close()
 		return str(account)
 	else:
+		conn.close()
 		return make_response("error", 500)
 
+@dinner.route('/status', methods=['POST'])
+def status():
+	data = request.data
+	json = eval(data)
+	User_ID = str(json["User_ID"])
+	status = str(json["status"])
+	cursor.execute('UPDATE dinner_near Set active = %s WHERE User_ID = %s', (status, User_ID))
+	conn.commit()
+	conn.close()
+	return make_response("", 200)
+	
+@dinner.route('/user_id_status/<ID>', methods=['GET'])
+def user_id_status(ID):
+	User_ID = ID
+	cursor.execute('SELECT active FROM dinner_near WHERE User_ID = %s', (User_ID))
+	conn.commit()
+	conn.close()
+	return jsonify(cursor.fetchone())
