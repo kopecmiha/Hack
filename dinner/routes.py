@@ -59,7 +59,7 @@ def data_load():
 		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address, active) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "','" + str(active) + "')")
 		conn.commit()
 	else:
-		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "')")
+		cursor.execute("insert into dinner_near (title, description, images, price, User_ID, latitude, longitude, address, active) values ('" + title + "','"  + description + "','" + path_list +  "','" + price + "','" + User_ID + "','" + lat + "','" + longi + "','" + address + "','" + str(1) + "')")
 		cursor.execute("UPDATE dinner_users SET place_count = %s WHERE id IN (" + User_ID + ")", (1))
 		conn.commit()
 	conn.close()
@@ -181,25 +181,33 @@ def regist():
 	pasport_number = str(json["pasport_number"])
 	birthday_date = str(json["birthday_date"])
 	pasport_photo = str(json["pasport_photo"])
-	pasport_photo = base64.b64decode(pasport_photo)
-	desc = str(json["description"])
+	if pasport_photo != "":
+		pasport_photo = base64.b64decode(pasport_photo)
+		path = r"home/c/cp36696/dinner_near/public_html"
+		path_wr = r"/dinner/images/image" + str(time.time()) + str(random.randint(0, 999)) + ".png"
+		with open(path + path_wr, "wb") as image_file:
+			image_file.write(pasport_photo)
+		path_wr = r"http://dinner-near.tw1.ru" + path_wr
+	else:
+		path_wr = ""
 	avatar = str(json["avatar"])
-	avatar = base64.b64decode(avatar)
+	if avatar != "":
+		avatar = base64.b64decode(avatar)
+		path_av = r"home/c/cp36696/dinner_near/public_html"
+		path_av_wr = r"/dinner/images/image_av" + str(time.time()) + str(random.randint(0, 999)) + ".png"
+		with open(path_av + path_av_wr, "wb") as image_file_av:
+			image_file_av.write(avatar)
+		path_av_wr = r"http://dinner-near.tw1.ru" + path_av_wr
+	else:
+		path_av_wr = ""
+
 	sex = str(json["sex"])
 	fio = str(json["fio"])
 	miting = str(0)
 	cursor.execute("SELECT * FROM dinner_users WHERE email = %s", (email))
 	check = cursor.fetchone()
 	if check == None:
-		path = r"home/c/cp36696/dinner_near/public_html"
-		path_wr = r"/dinner/images/image" + str(time.time()) + str(random.randint(0, 999)) + ".png"
-		path_av = r"home/c/cp36696/dinner_near/public_html"
-		path_av_wr = r"/dinner/images/image_av" + str(time.time()) + str(random.randint(0, 999)) + ".png"
-		with open(path + path_wr, "wb") as image_file:
-			image_file.write(pasport_photo)
-		with open(path_av + path_av_wr, "wb") as image_file_av:
-			image_file_av.write(avatar)
-		cursor.execute("insert into dinner_users (email, password, create_time, pasport_number, birthday_date, pasport_photo, avatar, sex, FIO, miting_count, description) values ('" + email + "','"  + password + "','" + create_time + "','" + pasport_number + "','" + birthday_date + "','" + r"http://dinner-near.tw1.ru" + path_wr + "','" + r"http://dinner-near.tw1.ru" + path_av_wr + "','" + sex + "','" + fio + "','" + miting + "','" + desc + "')")
+		cursor.execute("insert into dinner_users (email, password, create_time, pasport_number, birthday_date, pasport_photo, avatar, sex, FIO, miting_count) values ('" + email + "','"  + password + "','" + create_time + "','" + pasport_number + "','" + birthday_date + "','" + path_wr + "','" + path_av_wr + "','" + sex + "','" + fio + "','" + miting + "')")
 		conn.commit()
 		conn.close()
 		return make_response("", 200)
