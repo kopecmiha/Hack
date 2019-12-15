@@ -1,3 +1,4 @@
+#!/home/c/cp36696/myenv/bin/python3
 from dinner import dinner
 import os
 import time
@@ -127,7 +128,8 @@ def user_view(ID):
         		"sex" : View[8],
         		"FIO" : View[9],
 				"miting_count" : View[10],
-				"place_count" : View[11]
+				"place_count" : View[11],
+				"desription" : View[12]
 		}
 	else:
 		json = None
@@ -185,6 +187,7 @@ def regist():
 	birthday_date = str(json["birthday_date"])
 	pasport_photo = str(json["pasport_photo"])
 	pasport_photo = base64.b64decode(pasport_photo)
+	desc = str(json["description"])
 	avatar = str(json["avatar"])
 	avatar = base64.b64decode(avatar)
 	sex = str(json["sex"])
@@ -201,7 +204,7 @@ def regist():
 			image_file.write(pasport_photo)
 		with open(path_av + path_av_wr, "wb") as image_file_av:
 			image_file_av.write(avatar)
-		cursor.execute("insert into dinner_users (email, password, create_time, pasport_number, birthday_date, pasport_photo, avatar, sex, FIO, miting_count) values ('" + email + "','"  + password + "','" + create_time + "','" + pasport_number + "','" + birthday_date + "','" + r"http://dinner-near.tw1.ru" + path_wr + "','" + r"http://dinner-near.tw1.ru" + path_av_wr + "','" + sex + "','" + fio + "','" + miting + "')")
+		cursor.execute("insert into dinner_users (email, password, create_time, pasport_number, birthday_date, pasport_photo, avatar, sex, FIO, miting_count, description) values ('" + email + "','"  + password + "','" + create_time + "','" + pasport_number + "','" + birthday_date + "','" + r"http://dinner-near.tw1.ru" + path_wr + "','" + r"http://dinner-near.tw1.ru" + path_av_wr + "','" + sex + "','" + fio + "','" + miting + "','" + desc + "')")
 		conn.commit()
 		conn.close()
 		return make_response("", 200)
@@ -276,6 +279,17 @@ def status():
 	User_ID = str(json["User_ID"])
 	status = str(json["status"])
 	cursor.execute('UPDATE dinner_near Set active = %s WHERE User_ID = %s', (status, User_ID))
+	conn.commit()
+	conn.close()
+	return make_response("", 200)
+	
+@dinner.route('/user_desc', methods=['POST'])
+def user_desc():
+	data = request.data
+	json = eval(data)
+	ID = str(json["id"])
+	desc = str(json["description"])
+	cursor.execute('UPDATE dinner_users Set description = %s WHERE id = %s', (desc, ID))
 	conn.commit()
 	conn.close()
 	return make_response("", 200)
