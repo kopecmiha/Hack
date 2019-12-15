@@ -4,7 +4,15 @@
                 color="red"
                 v-if="$store.state.isAddMeeting"
                 @click="$store.commit('addMeetingOn')"
-                style="position: absolute; z-index: 1; color: white;"
+                style="position: absolute;
+    z-index: 1;
+    color: white;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 256px;"
         >Выберите место на карте</v-btn>
         <div id="map">
         </div>

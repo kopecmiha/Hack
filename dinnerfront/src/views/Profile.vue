@@ -7,7 +7,12 @@
                         <v-row>
                             <v-col cols="3">
                                 <!--avatar-->
-                                <img class="avatar" src="../assets/no-avatar.jpg">
+                                <template v-if="$store.state.userInfo.avatar && $store.state.userInfo.avatar.length != 0">
+                                    <img class="avatar" :src="$store.state.userInfo.avatar">
+                                </template>
+                                <template v-else>
+                                    <img class="avatar" src="../assets/no-avatar.jpg">
+                                </template>
                             </v-col>
                             <v-col cols="9" class="user-info">
                                 <!--profile info-->
@@ -89,6 +94,19 @@
                 </v-tab-item>
             </v-tabs-items>
         </div>
+        <v-snackbar
+                v-model="snackbar"
+                :timeout="2000"
+        >
+            Настройки сохранены
+            <v-btn
+                    color="blue"
+                    text
+                    @click="snackbar = false"
+            >
+                Закрыть
+            </v-btn>
+        </v-snackbar>
     </div>
 </template>
 
@@ -101,7 +119,8 @@
             menu1: false,
             rating1: 2,
             rating2: 2,
-            dialog: false
+            dialog: false,
+            snackbar: false
         }),
         mounted: function() {
         },
@@ -110,7 +129,7 @@
                 this.axios.post('http://dinner-near.tw1.ru/status', {
                     status: this.ex11? 1: 0,
                     User_ID: this.$store.state.userInfo.id
-                })
+                }).then(a => this.snackbar = true);
             },
             init() {
 
