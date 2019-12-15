@@ -1,4 +1,3 @@
-#!/home/c/cp36696/myenv/bin/python3
 from dinner import dinner
 import os
 import time
@@ -7,7 +6,7 @@ import sys
 import json
 import random
 import request
-from flask import Flask, request, jsonify, render_template, flash, redirect, session, url_for, make_response
+from flask import Flask, request, jsonify, render_template, flash, redirect, session, url_for, make_response, send_from_directory
 from flask_cors import CORS
 from flaskext.mysql import MySQL
 from flask_wtf import FlaskForm
@@ -27,10 +26,6 @@ mysql.init_app(dinner)
 CORS(dinner)
 conn = mysql.connect()
 cursor = conn.cursor()
-
-@dinner.route('/index')
-def hello_world():
-    return 'здарова мир'
     
 @dinner.route('/database/point_add', methods=['POST'])
 def data_load():
@@ -302,6 +297,31 @@ def user_id_status(ID):
 	conn.close()
 	return jsonify(cursor.fetchone())
 	
-@dinner.route('/index')
+@dinner.route('/')
 def index():
 	return render_template('index.html')
+	
+@dinner.errorhandler(404)
+def not_found_error(error):
+	return redirect("/")
+
+
+@dinner.route('/js/<path:path>')
+def send_js(path):
+	return send_from_directory(r'templates/js', path)
+
+@dinner.route('/fonts/<path:path>')
+def send_fonts(path):
+	return send_from_directory(r'templates/fonts', path)
+
+@dinner.route('/css/<path:path>')
+def send_css(path):
+	return send_from_directory(r'templates/css', path)
+	
+@dinner.route('/img/<path:path>')
+def send_img(path):
+	return send_from_directory(r'templates/img', path)
+	
+@dinner.route('/<path:path>')
+def send_ico(path):
+	return send_from_directory(r'templates/', path)
