@@ -17,11 +17,11 @@ from flask_wtf import FlaskForm
 application = dinner
 dinner.secret_key = 'yoг newer newer newer newer newer now this secret key'
 mysql = MySQL()
-dinner.config['MYSQL_DATABASE_USER'] = 'cp36696_admireso'
-dinner.config['MYSQL_DATABASE_PASSWORD'] = 'social.admire'
-dinner.config['MYSQL_DATABASE_DB'] = 'cp36696_admireso'
+dinner.config['MYSQL_DATABASE_USER'] = ''
+dinner.config['MYSQL_DATABASE_PASSWORD'] = ''
+dinner.config['MYSQL_DATABASE_DB'] = ''
 dinner.config['MYSQL_DATABASE_HOST'] = 'localhost'
-dinner.config['UPLOAD_FOLDER'] = "/home/c/cp36696/dinner_near/public_html/dinner/images"
+dinner.config['UPLOAD_FOLDER'] = ""
 mysql.init_app(dinner)
 CORS(dinner)
 conn = mysql.connect()
